@@ -1,0 +1,6 @@
+ame: mri2fem-chapter3
+channels:
+  - conda-forge
+dependencies:
+  - svmtk
+  - python>=3.8
