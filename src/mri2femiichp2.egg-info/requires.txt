@@ -1,0 +1,6 @@
+meshio
+requests
+tqdm
+
+[svmtk]
+SVMTK

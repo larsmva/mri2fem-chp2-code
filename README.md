@@ -1,11 +1,14 @@
 
-# Code for chapter 2 of MRI2FEM book
+# Code for MRI2FEMII chapter 2.
 
-#TODO 
+This repository contains script from chapter 2.
 
-Rename repo 
 
-Link to data
+## Data 
+
+The scripts runs with the dataset [Data](https://doi.org/10.5281/zenodo.14536218).
+
+After the dataset is downloaded.
 
 
 ## Installation
@@ -38,22 +41,12 @@ conda activate mri2fem-chapter2
 
 ```
 
-### Source
+### Requirements 
 
-Install [FreSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall) and [SVMTK](https://github.com/SVMTK/SVMTK) from source following the respective installation notes.
+Install [FreSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall) and [SVMTK](https://github.com/SVMTK/SVMTK) from source following each of the installation notes.
  
-### Obtaining Data 
-
-TO BE SET
 
 
-## Running the code
 
-To generate the meshes call
-
-```bash
-python3 create_mesh.py
-python3 convert_mesh.py
-```
 
 
