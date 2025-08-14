@@ -1,0 +1,12 @@
+name: mri2femiichp2
+channels:
+  - conda-forge
+dependencies:
+  - svmtk
+  - python==3.10
+  - meshio
+  - matplotlib
+  - ipython
+  - requests
+  - tqdm
+  - mpich

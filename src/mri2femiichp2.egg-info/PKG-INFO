@@ -1,0 +1,70 @@
+Metadata-Version: 2.4
+Name: mri2femiichp2
+Version: 0.1.0
+Summary: Source code for the mri2femII book chapter 2.
+Author: Kent-Andre Mardal, Lars Magnus Valnes
+Project-URL: Homepage,  
+Keywords: mri,fem,brain,meshing
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: meshio
+Requires-Dist: requests
+Requires-Dist: tqdm
+Provides-Extra: svmtk
+Requires-Dist: SVMTK; extra == "svmtk"
+Dynamic: license-file
+
+
+# Code for MRI2FEMII chapter 2.
+
+This repository contains script from chapter 2.
+
+
+## Data 
+
+The scripts runs with the dataset [Data](https://doi.org/10.5281/zenodo.14536218).
+
+After the dataset is downloaded.
+
+
+## Installation
+
+### Docker
+
+Either run the docker image available under
+
+```bash
+docker run -ti -v $(pwd):/root/shared -w /root/shared --rm ghcr.io/larsmva/mri2fem-ii-chapter-2-code
+```
+
+or build it locally with
+
+```bash
+docker build -t mri2fem-chapter2 -f ./docker/Dockerfile .
+```
+
+The image can be started with
+
+```bash
+docker run -ti -v $(pwd):/root/shared -w /root/shared --rm  mri2fem-chapter2
+```
+
+### Conda
+
+```bash
+conda env create -f environment.yml
+conda activate mri2fem-chapter2
+
+```
+
+### Requirements 
+
+Install [FreSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall) and [SVMTK](https://github.com/SVMTK/SVMTK) from source following each of the installation notes.
+ 
+
+
+
+
+

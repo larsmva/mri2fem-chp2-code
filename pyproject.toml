@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mri2femiichp2"
+version = "1.0.0"
+dependencies = ["meshio", "requests", "tqdm", "SVMTK>=2"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+description = "Source code for the mri2femII book chapter 2."
+authors = [
+    {name = "Kent-Andre Mardal"},
+    {name = "Lars Magnus Valnes"},
+]
+keywords = ["mri", "fem", "brain", "meshing"]
+urls = {Homepage = " "}
+
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+
+[project.scripts]
+mri2femiichp2 = "mri2femiichp2.cli:main"
+
+[project.optional-dependencies]
+svmtk = ["SVMTK"]
+
+
+[tool.setuptools]
+include-package-data = true
+package-dir = {"" = "src"}
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
