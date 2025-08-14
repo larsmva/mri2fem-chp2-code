@@ -1,7 +1,12 @@
+
 import logging
 import argparse
 
-from . import svmtk, download_data, freesurfer
+from . import download_data
+from . import subject_mesh
+from . import create_mesh
+from . import convert_to_dolfin_mesh
+#from . import write_config
 
 def setup_parser():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -21,22 +26,25 @@ def setup_parser():
     subparsers = parser.add_subparsers(dest="command")
 
     # Download data parser
-    download_data_parser = subparsers.add_parser("download-data", help="Download the sample data")
-    download_data.add_arguments(download_data_parser)
+    download_parser = subparsers.add_parser("download", help="Download the dataset")
+    download_data.add_arguments(download_parser)
 
-    # SVMTK parser
-    svmtk_parser = subparsers.add_parser("svmtk", help="Surface and volume meshing toolkit")
-    svmtk.add_svmtk_parser(svmtk_parser)
+    meshing_parser = subparsers.add_parser("mesh", help="Generates mesh from surface files.")
+    create_mesh.add_arguments(meshing_parser)
+    
+    subject_mesh_parser =  subparsers.add_parser("subject-mesh", help="Generates mesh from surface files")
+    subject_mesh.add_arguments(subject_mesh_parser)
 
-    # Freesurfer parser
-    freesurfer_parser = subparsers.add_parser("freesurfer", help="Run freesurfer")
-    freesurfer.add_arguments(freesurfer_parser)
+
+    convert_mesh_parser = subparsers.add_parser("convert-mesh", help="Convert .mesh format to .h5")
+    convert_to_dolfin_mesh.add_arguments(convert_mesh_parser)
 
     return parser
 
 
 def dispatch(parser: argparse.ArgumentParser) -> int:
     args = vars(parser.parse_args())
+    print( args)
     logging.basicConfig(level=logging.DEBUG if args.pop("verbose") else logging.INFO)
 
     logger = logging.getLogger(__name__)
@@ -49,10 +57,14 @@ def dispatch(parser: argparse.ArgumentParser) -> int:
         return 0
 
     try:
-        if command == "download-data":
+        if command == "download":
             download_data.main(**args)
-        elif command == "svmtk":
-            svmtk.dispatch(args.pop("svmtk-command"), args)
+        elif command == "mesh" : 
+            create_mesh.main(**args)
+        elif command == "subject-mesh": 
+            subject_mesh.main(**args)
+        elif command == "convert-format":
+            convert_to_dolfin_mesh.main(**args)
         else:
             logger.error(f"Unknown command {command}")
             parser.print_help()

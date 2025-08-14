@@ -1,6 +1,6 @@
-ame: mri2fem-chapter3
+name: mri2femiichp2
 channels:
   - conda-forge
 dependencies:
-  - svmtk
+  - svmtk>=2.0.0
   - python>=3.8

@@ -1,13 +1,14 @@
-from pathlib import Path
-import logging
-import tarfile
 
+import logging
+from pathlib import Path
+
+import tarfile
 import requests
 from tqdm import tqdm
 
+
 here = Path(__file__).absolute().parent
 logger = logging.getLogger(__name__)
-
 
 def download(path, link, desc=None, params=None):
     if desc is None:
@@ -26,34 +27,45 @@ def download(path, link, desc=None, params=None):
     progress_bar.close()
 
     folder = path.resolve().parent
-    logger.info("Extracting %s to %s", path, folder)
+    logger.info(f"Extracting {path} to {folder}")
     with tarfile.open(path, "r:gz") as tar:
-        tar.extractall(folder)
+        tar.extractall(folder,filter='data')
     path.unlink()
 
 
-def add_arguments(parser):
-    parser.add_argument(
-        "dataset", help="Dataset to download", choices=["mri2femii-chp2-dataset"]
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        type=Path,
-        default=Path("dataset.tar.gz"),
-        help="Output path of the downloaded dataset",
-    )
-
-
-
-def download_mri2femii_chp2_dataset(output: Path = Path("mri2fem-dataset.tar.gz")) -> None:
-    link = "https://zenodo.org/records/14536218/files/mri2femii-chp2-dataset.tar.gz?download=1
-    logger.info("Downloading MRI2FEM dataset to %s", output)
+def download_mri2femii_chp2_dataset(output: Path = Path("mri2femii-chp2-dataset.tar.gz")) -> None:
+    link = "https://zenodo.org/records/14536218/files/mri2femii-chp2-dataset.tar.gz?download=1"
+    logger.info(f"Downloading MRI2FEMII chapter 2 dataset to {output}")
     download(output, link)
 
 
-def main(output: Path, dataset: str) -> None:
-    if dataset == "mri2femii-chp2-dataset":
-        download_mri2femii_chp2_dataset(output)
-    else:
-        raise ValueError(f"Unknown dataset: {dataset}")
+def main(output):
+    download_mri2femii_chp2_dataset(Path(f"{output}/mri2femii-chp2-dataset.tar.gz"))
+
+
+def add_arguments(parser):
+    
+   from pathlib import Path
+   parser.add_argument(
+      "-o",
+      "--output", 
+      help="Output directory of the downloaded dataset.")
+   
+
+   
+
+
+if __name__ == '__main__':
+
+    import argparse
+    import time 
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', 
+                        '--output'    ,type=str, help="Output directory of the downloaded dataset.")
+
+    start_time = time.time()        
+    Z = parser.parse_args()    
+    
+    download_mri2femii_chp2_dataset( Path(f"{Z.output}/mri2femii-chp2-dataset.tar.gz"))
+    

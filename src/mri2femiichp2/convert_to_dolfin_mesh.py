@@ -52,6 +52,23 @@ def write_xdmf_to_h5(xdmfdir, hdf5file):
     hdf.write(boundaries, "/boundaries") 
     hdf.close()
 
+
+from pathlib import Path
+
+def add_arguments(parser, subject =Path("mri2femii-chp2-dataset/Gonzo") ):
+    parser.add_argument('--meshfile', default=f"{subject}/output/gonzo.mesh", type=str)
+    parser.add_argument('--hdf5file' , default=f"{subject}/output/gonzo.h5", type=str)
+    parser.add_argument('--xdmfdir', default=Path("mri2femii-chp2-dataset/Gonzo/output/tmp") , type=str)
+
+
+
+def main(meshfile, hdf5file, xdmfdir ):
+    xdmfdir.mkdir(parents=True, exist_ok=True)
+    write_mesh_to_xdmf(meshfile, xdmfdir) 
+    write_xdmf_to_h5(xdmfdir, hdf5file) 
+
+
+
 if __name__ =='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--meshfile', type=str)      
