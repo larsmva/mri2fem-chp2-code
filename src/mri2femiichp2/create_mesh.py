@@ -56,7 +56,7 @@ def get_foramen_magnum(brainstem, z0, radius=20):
 
 from pathlib import Path
 import SVMTK as svm
-
+from tqdm import tqdm # TODO create progress bar _> time progress and 
 
 def add_arguments(parser, subject =Path("mri2femii-chp2-dataset/Gonzo") ):
     parser.add_argument('--rhpial'    , default=f"{subject}/output/rhpial.stl", type=str,      help="The path to the right pial surface." ) 
@@ -69,15 +69,19 @@ def add_arguments(parser, subject =Path("mri2femii-chp2-dataset/Gonzo") ):
     parser.add_argument('--ventricles', default=f"{subject}/output/ventricles.stl", type=str,  help="The path to the ventricular surface.")
     parser.add_argument('--edge_length', default=1.0, type=float,  help="Target surface edge length duirng remeshing (Default=1.0) ")
     parser.add_argument('--resolution', default=64,type=float,  help="The mesh resolution of the mesh. The bounding radius of all surfaces divided by the resolution gives targt cell_size. ")
-    parser.add_argument('--export_fenicsx', type=bool, default=False, help =" Option to export the mesh to npz format compatible with FEniCSx.")
+    parser.add_argument('--export_fenicsx', action='store_true',help =" Option to export the mesh to npz format compatible with FEniCSx.")
     parser.add_argument('--out', type=str, default=f"{subject}/output/gonzo.mesh", help=" The path to the created mesh.")
  
 
 def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles, edge_length, resolution, out, export_fenicsx):
+    
+    import time
+    start_time = time.time()        
     # ----- Load surfaces -----    
     # Load and repair the cerebellum surface    
     cerebellum = svm.Surface(cerebellum)
     cerebellum = repair_surface(cerebellum, edge_length)
+    
     # Load and repair the brainstem surface
     brainstem = svm.Surface(brainstem)
     brainstem = repair_surface(brainstem, edge_length)
@@ -102,18 +106,21 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     # Load and repair the surface of the ventricle system
     ventricles = svm.Surface(ventricles)
     ventricles = repair_surface(ventricles, edge_length)
+
     # ----- Merge white surfaces -----
     # White surfaces only partially overlapping due to smoothing effects
     white = svm.union_partially_overlapping_surfaces(rhwhite, lhwhite)
 
     # Repair surface, as the union may result in self-intersections.
     white = repair_surface(white, edge_length)
+    
 
     # ----- Separete pial surfaces ------
     # Separate overlapp between the pial surfaces.
     svm.separate_overlapping_surfaces(rhpial, lhpial, white)
     # Separate the pial surfaces.
     svm.separate_close_surfaces(rhpial, lhpial, white)
+
 
     # ----- Define foramen magnum plane -----
     # Foramen magnum set 10 mm lower than the cerebellum surface
@@ -125,6 +132,7 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     # Adjust cerebellum to be disjointed from the pial surfaces
     svm.expose(cerebellum,lhpial)
     svm.expose(cerebellum,rhpial)
+
     # Adjust dura to enclose the cerebellum surface    
     svm.enclose(dura,cerebellum)
 
@@ -135,11 +143,14 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     # Adjust white to enclose the ventricular surface 
     # Union with ventricles.
     white.union(ventricles)
+    white.smooth_taubin(20)  
 
     # Repair any faults in the new surface
     white = repair_surface(white)
+
     # Expand white surface to enclose the ventricles
     svm.enclose(white,ventricles)
+
     # Contract ventricle surface to inside the white
     svm.embed(ventricles,white)
 
@@ -148,11 +159,12 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     # Subtract the cisterna magna from the white surface
     white.difference(cisterna_magna)
     # Repair any faults in the new surface
+
     white = repair_surface(white)
     # Adjust dura/bounding surface to enclose the pial surfaces
     svm.enclose(dura,lhpial)
     svm.enclose(dura,rhpial)
-    
+
     dura.smooth_taubin(20)  
 
     foramen_magnum.save(f"{out}/final-fm.stl")
@@ -169,7 +181,8 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
 
     white.save(f"{out}/final-white-clip.stl") 
     dura.save(f"{out}/final-dura-clip.stl")    
-
+    
+    print("Done with surfaces based operations")
     # Set the structure of the surfaces.
     surfaces = [dura,lhpial,rhpial,white,ventricles]
 
@@ -192,7 +205,7 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     # Detect and preserve sharp edges in a given plane.
     domain.add_sharp_border_edges(dura, foramen_magnum,60)    
     # Create mesh with mesh resolution as input 
-    print("Begin creating mesh")
+    print("Begin  meshing")
     domain.create_mesh(resolution)
 
     # ----- Mesh optimiztion -----   
@@ -226,7 +239,7 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
         The output format for FEniCSx is npz, which can be read into FEniCSx
         with the function read_from_svmtk_npz in file read_npz.py
         """
-        np.savez(f"{out}/gonzo.npz", points =points , cells=cells ,
+        np.savez(f"{out}".replace(".mesh",".npz"), points =points , cells=cells ,
         cell_tags =markers , facets =facets , facet_tags = f_markers )
        
     
@@ -252,7 +265,7 @@ if __name__ == '__main__':
     parser.add_argument('--cerebellum', default=envpath+"cerebellum.stl", type=str, help="The path to the cerebellum surface.")
     parser.add_argument('--dura'      , default=envpath+"dura.stl", type=str,  help="The path to the dura surface.")
     parser.add_argument('--ventricles', default=envpath+"ventricles.stl", type=str, help="The path to the ventricular surface.")
-    parser.add_argument('--export_fenicsx', type=bool, default=False,help =" Option to export the mesh to npz format compatible with FEniCSx.")
+    parser.add_argument('--export_fenicsx', action='store_true',help =" Option to export the mesh to npz format compatible with FEniCSx.")
     parser.add_argument('--resolution', default=64,type=float,  help="The mesh resolution of the mesh. The bounding radius of all surfaces divided by the resolution gives targt cell_size. ")
     parser.add_argument('--edge_length', type=float, defualt=1.0 , help="Target surface edge length duirng remeshing (Default=1.0) ")
     parser.add_argument('--out', type=str, default=envpath+"gonzo.mesh", help=" The path to the created mesh.")
