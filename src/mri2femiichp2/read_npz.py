@@ -70,7 +70,7 @@ def read_from_svmtk_npz(
         infile: Path to input file
     """
     infile = Path(infile)
-    _required_keys = ["cell", "points", "cell_tags", "facets", "facet_tags"]
+    _required_keys = ["cells", "points", "cell_tags", "facets", "facet_tags"]
     assert infile.suffix == ".npz"
     points = np.empty((0, 3))
     cells = np.empty((0, 4), dtype=np.int64)
@@ -86,7 +86,7 @@ def read_from_svmtk_npz(
                     raise RuntimeError(f"Missing '{key}' in {infile}")
 
             points = data["points"].reshape(-1, 3)
-            cells = data["cell"]
+            cells = data["cells"]
             cell_tags = data["cell_tags"]
             facets = data["facets"]
             facet_tags = data["facet_tags"]
@@ -102,8 +102,8 @@ if __name__ == "__main__":
     comm = MPI.COMM_WORLD
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--in', type=str)      
-    parser.add_argument('-o','--out', type=str) 
+    parser.add_argument('-i', '--i', type=str)      
+    parser.add_argument('-o','--o', type=str) 
     Z = parser.parse_args() 
     infile = Path(Z.i)
     mesh, ct, ft = read_from_svmtk_npz(comm, infile)
