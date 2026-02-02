@@ -71,7 +71,7 @@ def add_arguments(parser, subject =Path("mri2femii-chp2-dataset/Gonzo") ):
     parser.add_argument('--resolution', default=64,type=float,  help="The mesh resolution of the mesh. The bounding radius of all surfaces divided by the resolution gives targt cell_size. ")
     parser.add_argument('--export_fenicsx', action='store_true',help =" Option to export the mesh to npz format compatible with FEniCSx.")
     parser.add_argument('--out', type=str, default=f"{subject}/output/gonzo.mesh", help=" The path to the created mesh.")
- 
+    
 
 def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles, edge_length, resolution, out, export_fenicsx):
     
@@ -167,12 +167,12 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
 
     dura.smooth_taubin(20)  
 
-    foramen_magnum.save(f"{out}/final-fm.stl")
-    lhpial.save(f"{out}/final-lhpial.stl") 
-    rhpial.save(f"{out}/final-rhpial.stl")       
-    white.save(f"{out}/final-white.stl") 
-    ventricles.save(f"{out}/final-ventricles.stl") 
-    dura.save(f"{out}/final-dura.stl")
+    foramen_magnum.save(f"{subject}/output/final-fm.stl")
+    lhpial.save(f"{subject}/output/final-lhpial.stl") 
+    rhpial.save(f"{subject}/output/final-rhpial.stl")       
+    white.save(f"{subject}/output/final-white.stl") 
+    ventricles.save(f"{subject}/output/final-ventricles.stl") 
+    dura.save(f"{subject}/output/final-dura.stl")
 
  
     # Clip the bounding and white surface.
