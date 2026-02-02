@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-s','--subject', default=envpath+"ventricles.stl", type=str)
     parser.add_argument('--export_fenicsx', action='store_true')
     parser.add_argument('--resolution', type=float, default=64)
-    parser.add_argument('--edge_length', type=float, defualt=1.0)
+    parser.add_argument('--edge_length', type=float, default=1.0)
     parser.add_argument('-o','--output', type=str, default=envpath+"gonzo.mesh")
     Z = parser.parse_args()
     

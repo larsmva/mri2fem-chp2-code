@@ -267,7 +267,7 @@ if __name__ == '__main__':
     parser.add_argument('--ventricles', default=envpath+"ventricles.stl", type=str, help="The path to the ventricular surface.")
     parser.add_argument('--export_fenicsx', action='store_true',help =" Option to export the mesh to npz format compatible with FEniCSx.")
     parser.add_argument('--resolution', default=64,type=float,  help="The mesh resolution of the mesh. The bounding radius of all surfaces divided by the resolution gives targt cell_size. ")
-    parser.add_argument('--edge_length', type=float, defualt=1.0 , help="Target surface edge length duirng remeshing (Default=1.0) ")
+    parser.add_argument('--edge_length', type=float, default=1.0 , help="Target surface edge length duirng remeshing (Default=1.0) ")
     parser.add_argument('--out', type=str, default=envpath+"gonzo.mesh", help=" The path to the created mesh.")
   
     start_time = time.time()        
