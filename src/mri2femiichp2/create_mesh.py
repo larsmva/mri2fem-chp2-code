@@ -174,14 +174,10 @@ def main(rhpial, lhpial, lhwhite,rhwhite, brainstem, cerebellum,dura, ventricles
     ventricles.save(f"{subject}/output/final-ventricles.stl") 
     dura.save(f"{subject}/output/final-dura.stl")
 
- 
     # Clip the bounding and white surface.
     dura.clip(foramen_magnum)
     white.clip(foramen_magnum)
 
-    white.save(f"{out}/final-white-clip.stl") 
-    dura.save(f"{out}/final-dura-clip.stl")    
-    
     print("Done with surfaces based operations")
     # Set the structure of the surfaces.
     surfaces = [dura,lhpial,rhpial,white,ventricles]
